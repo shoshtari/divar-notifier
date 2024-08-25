@@ -15,7 +15,7 @@ func main() {
 		panic(err)
 	}
 
-	divarClient := divar.NewDivarClient()
+	divarClient := divar.NewDivarClient(serviceConfig.DivarClient)
 	notifier := notify.NewNotifier(serviceConfig.Notifier)
 
 	jarchiService := jarchi.New(divarClient, notifier)

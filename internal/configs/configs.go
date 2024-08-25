@@ -8,23 +8,23 @@ import (
 )
 
 type ServiceConfig struct {
-	Notifier    SectionNotifier    `yaml:"notifier"`
-	DivarClient SectionDivarClient `yaml:"divar"`
-	Core        SectionCore        `yaml:"core"`
+	Notifier    SectionNotifier    `mapstructure:"notifier"`
+	DivarClient SectionDivarClient `mapstructure:"divar"`
+	Core        SectionCore        `mapstructure:"core"`
 }
 
 type SectionNotifier struct {
-	BaseUrl string `yaml:"baseurl"`
-	Target  int    `yaml:"target"`
-	Token   string `yaml:"token"`
+	BaseUrl string `mapstructure:"baseurl"`
+	Target  int    `mapstructure:"target"`
+	Token   string `mapstructure:"token"`
 }
 
 type SectionDivarClient struct {
-	URL string `yaml:"url"`
+	URL string `mapstructure:"url"`
 }
 
 type SectionCore struct {
-	Interval time.Duration `yaml:"interval"`
+	Interval time.Duration `mapstructure:"interval"`
 }
 
 func GetConfig(paths ...string) (ServiceConfig, error) {
