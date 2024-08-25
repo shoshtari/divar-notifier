@@ -20,7 +20,9 @@ type SectionNotifier struct {
 }
 
 type SectionDivarClient struct {
-	URL string `mapstructure:"url"`
+	URL      string `mapstructure:"url"`
+	MaxPrice int    `mapstructure:"max_price"`
+	MinSize  int    `mapstructure:"min_size"`
 }
 
 type SectionCore struct {
