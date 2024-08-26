@@ -10,14 +10,11 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/shoshtari/divar-notifier/internal/configs"
-	"github.com/shoshtari/divar-notifier/internal/notify"
 	"github.com/shoshtari/divar-notifier/pkg"
 )
 
-var not notify.Notifier
-
 type DivarClient interface {
-	GetPosts(context.Context, chan<- DivarPost) error
+	GetPosts(context.Context, time.Time, chan<- DivarPost) error
 }
 
 type DivarClientImp struct {
@@ -28,12 +25,13 @@ type DivarClientImp struct {
 func (d DivarClientImp) getReqBody(maxPrice int, minSize int, lastPostDate time.Time) []byte {
 
 	const templateFirstPage = `{"city_ids":["1"],"pagination_data":{"@type":"type.googleapis.com/post_list.PaginationData"},"search_data":{"form_data":{"data":{"category":{"str":{"value":"residential-sell"}},"price":{"number_range":{"maximum":"%d"}},"size":{"number_range":{"minimum":"%d"}},"sort":{"str":{"value":"sort_date"}}}}}}`
-	const template = `{"city_ids":["1"],"pagination_data":{"@type":"type.googleapis.com/post_list.PaginationData","last_post_date":"%v"},"search_data":{"form_data":{"data":{"category":{"str":{"value":"residential-sell"}},"price":{"number_range":{"maximum":"%d"}},"size":{"number_range":{"minimum":"%d"}},"sort":{"str":{"value":"sort_date"}}}}}}`
+	const template = `{"city_ids":["1"],"pagination_data":{"@type":"type.googleapis.com/post_list.PaginationData","last_post_date":"%s"},"search_data":{"form_data":{"data":{"category":{"str":{"value":"residential-sell"}},"price":{"number_range":{"maximum":"%d"}},"size":{"number_range":{"minimum":"%d"}},"sort":{"str":{"value":"sort_date"}}}}}}`
 	if lastPostDate.IsZero() {
 		ans := (fmt.Sprintf(templateFirstPage, maxPrice, minSize))
 		return []byte(ans)
 	}
-	return []byte(fmt.Sprintf(template, lastPostDate, maxPrice, minSize))
+	lastPostDateStr := lastPostDate.Format("2006-01-02T15:04:05.999999Z")
+	return []byte(fmt.Sprintf(template, lastPostDateStr, maxPrice, minSize))
 
 }
 
@@ -63,7 +61,7 @@ func (d DivarClientImp) getPage(ctx context.Context, lastTime time.Time) (*Divar
 	return &divarRes, nil
 }
 
-func (d DivarClientImp) GetPosts(ctx context.Context, postChan chan<- DivarPost) error {
+func (d DivarClientImp) GetPosts(ctx context.Context, maxTime time.Time, postChan chan<- DivarPost) error {
 	var lastTime time.Time
 	running := true
 
@@ -88,12 +86,11 @@ func (d DivarClientImp) GetPosts(ctx context.Context, postChan chan<- DivarPost)
 		}()
 		return errChan
 	}
-	for running {
+	for running && (maxTime.Before(lastTime) || lastTime.IsZero()) {
 		select {
 		case <-ctx.Done():
 			return pkg.ErrCanceled
 		case err := <-process():
-			not.SendMessage(fmt.Sprint(err, "SALAM"))
 			if err == nil {
 				continue
 			}
@@ -101,7 +98,6 @@ func (d DivarClientImp) GetPosts(ctx context.Context, postChan chan<- DivarPost)
 		}
 	}
 
-	close(postChan)
 	return nil
 }
 

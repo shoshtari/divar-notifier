@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/shoshtari/divar-notifier/internal/configs"
-	"github.com/shoshtari/divar-notifier/internal/notify"
 	"github.com/shoshtari/divar-notifier/test"
 	"github.com/stretchr/testify/assert"
 )
@@ -30,10 +29,9 @@ func TestDivar(t *testing.T) {
 	var postCount int
 
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, time.Minute)
+	ctx, cancel := context.WithTimeout(ctx, time.Minute*5)
 	defer cancel()
 
-	not = notify.NewNotifier(conf.Notifier)
 	go func() {
 		for {
 			_, exists := <-posts
@@ -43,7 +41,7 @@ func TestDivar(t *testing.T) {
 			postCount++
 		}
 	}()
-	err = divarClient.GetPosts(ctx, posts)
+	err = divarClient.GetPosts(ctx, time.Now().Add(time.Hour*-24), posts)
 	assert.Nil(t, err)
 	assert.NotZero(t, postCount)
 }
