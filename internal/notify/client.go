@@ -1,5 +1,8 @@
 package notify
 
+//TODO: add a report to tell how many messages sent in a day
+//TODO: add support for proxy
+
 import (
 	"bytes"
 	"encoding/json"

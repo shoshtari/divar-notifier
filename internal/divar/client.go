@@ -1,5 +1,7 @@
 package divar
 
+//TODO: get post pic as a io reader or byte array to be able to send it to notifier
+
 import (
 	"bytes"
 	"context"

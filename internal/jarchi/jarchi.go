@@ -1,5 +1,9 @@
 package jarchi
 
+//TODO: handle retry/log for functions like func()error
+//TODO: generate proper message to give to notifier
+//TODO: add a db to avoid processing a message twice
+
 import (
 	"context"
 	"log"
