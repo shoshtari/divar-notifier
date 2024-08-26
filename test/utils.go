@@ -46,10 +46,10 @@ func GetTestDir() (string, error) {
 
 }
 
-func GetTestConfig() (configs.ServiceConfig, error) {
+func GetTestConfig() (configs.JarchiConfig, error) {
 	path, err := GetTestDir()
 	if err != nil {
-		return configs.ServiceConfig{}, err
+		return configs.JarchiConfig{}, err
 	}
 	return configs.GetConfig(path)
 }

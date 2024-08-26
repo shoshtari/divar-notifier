@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-type ServiceConfig struct {
+type JarchiConfig struct {
 	Notifier    SectionNotifier    `mapstructure:"notifier"`
 	DivarClient SectionDivarClient `mapstructure:"divar"`
 	Core        SectionCore        `mapstructure:"core"`
@@ -20,17 +20,18 @@ type SectionNotifier struct {
 }
 
 type SectionDivarClient struct {
-	URL      string `mapstructure:"url"`
-	MaxPrice int    `mapstructure:"max_price"`
-	MinSize  int    `mapstructure:"min_size"`
+	URL      string        `mapstructure:"url"`
+	MaxPrice int           `mapstructure:"max_price"`
+	MinSize  int           `mapstructure:"min_size"`
+	MaxDate  time.Duration `mapstructure:"max_date"`
 }
 
 type SectionCore struct {
 	Interval time.Duration `mapstructure:"interval"`
 }
 
-func GetConfig(paths ...string) (ServiceConfig, error) {
-	var c ServiceConfig
+func GetConfig(paths ...string) (JarchiConfig, error) {
+	var c JarchiConfig
 	viper.SetConfigType("yaml")
 	viper.SetConfigName("divar-notifier")
 	for _, p := range paths {

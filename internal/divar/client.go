@@ -14,7 +14,7 @@ import (
 )
 
 type DivarClient interface {
-	GetPosts(context.Context, time.Time, chan<- DivarPost) error
+	GetPosts(context.Context, chan<- DivarPost) error
 }
 
 type DivarClientImp struct {
@@ -61,9 +61,10 @@ func (d DivarClientImp) getPage(ctx context.Context, lastTime time.Time) (*Divar
 	return &divarRes, nil
 }
 
-func (d DivarClientImp) GetPosts(ctx context.Context, maxTime time.Time, postChan chan<- DivarPost) error {
+func (d DivarClientImp) GetPosts(ctx context.Context, postChan chan<- DivarPost) error {
 	var lastTime time.Time
 	running := true
+	maxTime := time.Now().Add(-1 * d.config.MaxDate)
 
 	process := func() chan error {
 		errChan := make(chan error, 1)

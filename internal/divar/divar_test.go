@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var conf configs.ServiceConfig
+var conf configs.JarchiConfig
 var divarClient DivarClient
 
 func TestMain(m *testing.M) {
@@ -41,7 +41,7 @@ func TestDivar(t *testing.T) {
 			postCount++
 		}
 	}()
-	err = divarClient.GetPosts(ctx, time.Now().Add(time.Hour*-24), posts)
+	err = divarClient.GetPosts(ctx, posts)
 	assert.Nil(t, err)
 	assert.NotZero(t, postCount)
 }

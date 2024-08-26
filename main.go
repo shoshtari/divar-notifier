@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	serviceConfig, err := configs.GetConfig()
+	serviceConfig, err := configs.GetConfig(".")
 	if err != nil {
 		panic(err)
 	}
@@ -18,7 +18,7 @@ func main() {
 	divarClient := divar.NewDivarClient(serviceConfig.DivarClient)
 	notifier := notify.NewNotifier(serviceConfig.Notifier)
 
-	jarchiService := jarchi.New(divarClient, notifier)
+	jarchiService := jarchi.New(divarClient, notifier, serviceConfig.Core)
 	if err := jarchiService.Start(); err != nil {
 		panic(err)
 	}

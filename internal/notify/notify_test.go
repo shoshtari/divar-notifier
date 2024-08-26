@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var conf configs.ServiceConfig
+var conf configs.JarchiConfig
 var notifier Notifier
 
 func TestMain(m *testing.M) {
