@@ -16,6 +16,7 @@ import (
 
 type Notifier interface {
 	SendMessage(text string) (int, error)
+	SendPhoto(caption string, photoUrl string) (int, error)
 	EditMessage(messageID int, text string) error
 }
 
@@ -94,6 +95,27 @@ func (n NotifierImp) EditMessage(messageID int, text string) error {
 	}
 
 	return nil
+}
+func (n NotifierImp) SendPhoto(caption, imageUrl string) (int, error) {
+	url := fmt.Sprintf("%v/%v/sendPhoto", n.config.BaseUrl, n.config.Token)
+	req := SendPhotoRequest{
+		ChatID:   n.config.Target,
+		Caption:  caption,
+		ImageUrl: imageUrl,
+	}
+
+	var res SendMessageResponse
+
+	err := n.sendRequest(url, req, &res)
+	if err != nil {
+		return -1, errors.Wrap(err, "can't send request")
+	}
+
+	if !res.Ok {
+		return -1, errors.New(fmt.Sprint("res is not ok, res data is", res))
+	}
+
+	return res.Result.MessageID, nil
 }
 
 func NewNotifier(config configs.SectionNotifier) Notifier {

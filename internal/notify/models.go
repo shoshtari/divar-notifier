@@ -18,6 +18,11 @@ type EditMessageRequest struct {
 	MessageID int    `json:"message_id"`
 }
 
+type SendPhotoRequest struct {
+	ChatID   int    `json:"chat_id"`
+	Caption  string `json:"caption"`
+	ImageUrl string `json:"photo"`
+}
 type Result struct {
 	MessageID int `json:"message_id"`
 }

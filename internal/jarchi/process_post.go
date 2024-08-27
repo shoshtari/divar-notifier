@@ -11,11 +11,10 @@ func (j JarchiImp) processPost(post divar.DivarPost) {
 
 	msg := fmt.Sprintf(`
 	Title: %s
-	Image: %s
 	Price: %s
 	Post: %s
-	`, post.Title, post.ImageUrl, post.Price, post.PostURL)
-	_, err := j.notifier.SendMessage(msg)
+	`, post.Title, post.Price, post.PostURL)
+	_, err := j.notifier.SendPhoto(msg, post.ImageUrl)
 	if err != nil {
 		log.Println(err)
 	}
