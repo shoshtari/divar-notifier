@@ -1,0 +1,11 @@
+notifier:
+  baseurl: https://api.telegram.org
+  target: 111111111
+  token: bot111111:abcdefghijklmnop
+divar: 
+  url: https://api.divar.ir/v8/postlist/w/search
+  max_price: 10000000000 
+  min_size: 100 
+  max_date: 24h 
+core:
+  interval: 1m
