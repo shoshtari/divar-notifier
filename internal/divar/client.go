@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -63,6 +64,11 @@ func (d DivarClientImp) getPage(ctx context.Context, lastTime time.Time) (*Divar
 	return &divarRes, nil
 }
 
+func (d DivarClientImp) getPostUrl(post DivarPost) string {
+	title := strings.Replace(post.Title, " ", "-", -1)
+	return fmt.Sprintf("https://divar.ir/v/%s/%s", title, post.Action.Payload.Token)
+}
+
 func (d DivarClientImp) GetPosts(ctx context.Context, postChan chan<- DivarPost) error {
 	var lastTime time.Time
 	running := true
@@ -80,6 +86,7 @@ func (d DivarClientImp) GetPosts(ctx context.Context, postChan chan<- DivarPost)
 			}
 
 			for _, widget := range res.ListWidgets {
+				widget.Post.PostURL = d.getPostUrl(widget.Post)
 				postChan <- widget.Post
 			}
 

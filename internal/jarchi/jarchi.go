@@ -6,7 +6,6 @@ package jarchi
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/shoshtari/divar-notifier/internal/configs"
@@ -23,15 +22,6 @@ type JarchiImp struct {
 	notifier    notify.Notifier
 	divarClient divar.DivarClient
 	config      configs.SectionCore
-}
-
-func (j JarchiImp) processPost(post divar.DivarPost) {
-
-	_, err := j.notifier.SendMessage(post.Title)
-	if err != nil {
-		log.Println(err)
-	}
-
 }
 
 func (j JarchiImp) processPosts() error {

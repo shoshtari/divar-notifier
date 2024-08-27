@@ -12,8 +12,9 @@ type DivarPost struct {
 		} `json:"payload"`
 	} `json:"action"`
 
-	Price   string `json:"middle_description_text"`
-	PostURL string // we must fill this part by ourselves
+	Price        string `json:"middle_description_text"`
+	TimeAndPlace string `json:"bottom_description_text"`
+	PostURL      string // we must fill this part by ourselves
 }
 
 type Widget struct {

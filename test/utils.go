@@ -21,7 +21,7 @@ func exists(path string) (bool, error) {
 }
 
 func GetTestDir() (string, error) {
-	return "/home/mpc/divar-notifier/test", nil
+	return "/home/morteza/divar-notifier/test", nil
 	ans, err := os.Getwd()
 	if err != nil {
 		return "", err
