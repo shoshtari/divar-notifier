@@ -38,7 +38,7 @@ func (d DivarClientImp) getReqBody(maxPrice int, minSize int, lastPostDate time.
 
 }
 
-func (d DivarClientImp) getPage(ctx context.Context, lastTime time.Time) (*DivarResponse, error) {
+func (d DivarClientImp) getListPage(ctx context.Context, lastTime time.Time) (*DivarResponse, error) {
 	reqBody := bytes.NewReader(d.getReqBody(d.config.MaxPrice, d.config.MinSize, lastTime))
 
 	req, err := http.NewRequest(http.MethodPost, d.config.URL, reqBody)
@@ -64,6 +64,16 @@ func (d DivarClientImp) getPage(ctx context.Context, lastTime time.Time) (*Divar
 	return &divarRes, nil
 }
 
+func (d DivarClientImp) getPostPage(post DivarPost) (Post, error) {
+	ans := Post{
+		Title:    post.Title,
+		Price:    post.Price,
+		ImageURL: post.ImageUrl,
+		PostURL:  post.PostURL,
+	}
+	return ans, nil
+}
+
 func (d DivarClientImp) getPostUrl(post DivarPost) string {
 	title := strings.Replace(post.Title, " ", "-", -1)
 	return fmt.Sprintf("https://divar.ir/v/%s/%s", title, post.Action.Payload.Token)
@@ -78,7 +88,7 @@ func (d DivarClientImp) GetPosts(ctx context.Context, postChan chan<- Post) erro
 		errChan := make(chan error, 1)
 
 		go func() {
-			res, err := d.getPage(ctx, lastTime)
+			res, err := d.getListPage(ctx, lastTime)
 
 			if err != nil {
 				errChan <- errors.Wrap(err, "couldn't get requests from page")
@@ -88,12 +98,12 @@ func (d DivarClientImp) GetPosts(ctx context.Context, postChan chan<- Post) erro
 			for _, widget := range res.ListWidgets {
 				widget.Post.PostURL = d.getPostUrl(widget.Post)
 
-				postChan <- Post{
-					Title:    widget.Post.Title,
-					Price:    widget.Post.Price,
-					ImageURL: widget.Post.ImageUrl,
-					PostURL:  d.getPostUrl(widget.Post),
+				post, err := d.getPostPage(widget.Post)
+				if err != nil {
+					errChan <- errors.Wrap(err, "couldn't get post page")
 				}
+
+				postChan <- post
 			}
 
 			lastTime = res.Pagination.Data.LastDate
