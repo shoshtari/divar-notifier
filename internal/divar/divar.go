@@ -17,7 +17,7 @@ import (
 )
 
 type DivarClient interface {
-	GetPosts(context.Context, chan<- DivarPost) error
+	GetPosts(context.Context, chan<- Post) error
 }
 
 type DivarClientImp struct {
@@ -69,7 +69,7 @@ func (d DivarClientImp) getPostUrl(post DivarPost) string {
 	return fmt.Sprintf("https://divar.ir/v/%s/%s", title, post.Action.Payload.Token)
 }
 
-func (d DivarClientImp) GetPosts(ctx context.Context, postChan chan<- DivarPost) error {
+func (d DivarClientImp) GetPosts(ctx context.Context, postChan chan<- Post) error {
 	var lastTime time.Time
 	running := true
 	maxTime := time.Now().Add(-1 * d.config.MaxDate)
@@ -87,7 +87,13 @@ func (d DivarClientImp) GetPosts(ctx context.Context, postChan chan<- DivarPost)
 
 			for _, widget := range res.ListWidgets {
 				widget.Post.PostURL = d.getPostUrl(widget.Post)
-				postChan <- widget.Post
+
+				postChan <- Post{
+					Title:    widget.Post.Title,
+					Price:    widget.Post.Price,
+					ImageURL: widget.Post.ImageUrl,
+					PostURL:  d.getPostUrl(widget.Post),
+				}
 			}
 
 			lastTime = res.Pagination.Data.LastDate

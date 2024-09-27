@@ -23,7 +23,7 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 func TestDivar(t *testing.T) {
-	posts := make(chan DivarPost, 100)
+	posts := make(chan Post, 100)
 
 	var err error
 	var postCount int

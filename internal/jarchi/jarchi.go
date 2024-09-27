@@ -25,7 +25,7 @@ type JarchiImp struct {
 }
 
 func (j JarchiImp) processPosts() error {
-	postChan := make(chan divar.DivarPost)
+	postChan := make(chan divar.Post)
 	defer close(postChan)
 
 	go func() {
