@@ -9,11 +9,11 @@ import (
 
 func (j JarchiImp) processPost(post divar.DivarPost) {
 
-	msg := fmt.Sprintf(`
-	Title: %s
-	Price: %s
-	Post: %s
-	`, post.Title, post.Price, post.PostURL)
+	var msg string
+	msg += post.Title + "\n"
+	msg += post.Price + "\n"
+	msg += fmt.Sprintf("[link](%s)", post.PostURL)
+
 	_, err := j.notifier.SendPhoto(msg, post.ImageUrl)
 	if err != nil {
 		log.Println(err)
